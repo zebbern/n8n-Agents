@@ -1,0 +1,65 @@
+{
+  "name": "simple ssh & command execute",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "dbcc040e-7376-48a7-b56d-0012b1a63d79",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "command": "whoami && hostname && uptime"
+      },
+      "id": "4e43868c-5f4c-4d6c-8f7c-181ac5988e7d",
+      "name": "SSH Execute Command",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        460,
+        200
+      ],
+      "credentials": {
+        "sshPassword": {
+          "id": "pNayuGvWMjam1rgH",
+          "name": "SSH Password account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [
+        [
+          {
+            "node": "SSH Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SSH Execute Command": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0fbe261c-28d4-4ee2-80ff-f835aeeb8969",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eb1f7a63d7261ae48134020df9f51c99ce236492df30462ba39ff7bd720662f3"
+  },
+  "id": "3sHzCsT3FuEtauDF",
+  "tags": []
+}
