@@ -1,0 +1,194 @@
+{
+  "name": "Main agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "name": "When chat message received",
+      "id": "cd338800-5b0d-4d82-845c-af3154ca18b6",
+      "position": [
+        -200,
+        20
+      ],
+      "typeVersion": 1.1,
+      "webhookId": "8b0c274d-4b68-43d9-a9a8-2c99db599246"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the main coordinator. If the user asks to run a terminal command, call the SSH Command Subagent subworkflow and pass the command as an input parameter called 'command'."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "name": "Main Agent",
+      "id": "5ad705b9-101c-410f-b09d-1ea1978fa7f8",
+      "position": [
+        112,
+        20
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to:\n- Execute safe, non-destructive shell commands on a remote server via SSH\n- Run scripts for automation, monitoring, or data collection\n\n**Do not:**\n- Run commands that could delete, overwrite, or corrupt files or data (e.g., `rm -rf`, `dd`, `mkfs`, etc.)\n- Attempt to shut down, restart, or otherwise disrupt the server’s operation (e.g., `shutdown`, `reboot`, `killall`)\n- Change critical system configurations without explicit permission\n- Install, upgrade, or remove system packages unless specifically instructed\n\n**Best practices:**\n- Prefer read-only or informational commands (e.g., `ls`, `cat`, `df -h`, `uptime`)\n- Always double-check any script or command for safety before execution\n- Log actions and outputs for auditing and troubleshooting\n- If in doubt, consult a system administrator\n\n**Caution:**  \nAny misuse can cause loss of data or system downtime. This tool should only be used for well-understood, authorized, and reversible operations.\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "kjtxS0Q5jeKYXzhX",
+          "mode": "list",
+          "cachedResultName": "SSH Command Executor"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "command": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('command', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "command"
+          ],
+          "schema": [
+            {
+              "id": "command",
+              "displayName": "command",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "name": "SSH Agent",
+      "id": "8911c9c5-b329-4281-aead-aa269ff87435",
+      "position": [
+        260,
+        240
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        140,
+        240
+      ],
+      "id": "cfec7446-bb24-4e3e-a52e-2ef3de58048b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        20,
+        240
+      ],
+      "id": "2505ad20-f5f9-4b9d-9fab-36bd2c394ddd",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "xXeo1FfNZdfklYee",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to brainstorm solutions when you face uncertainty or multiple options"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        380,
+        240
+      ],
+      "id": "d87e678f-fbff-404b-87ce-39749351c2b9",
+      "name": "Think"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SSH Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1fec178c-ecb9-4f12-bb1d-f895a4dde501",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eb1f7a63d7261ae48134020df9f51c99ce236492df30462ba39ff7bd720662f3"
+  },
+  "id": "qvfOLr7fewtykf3p",
+  "tags": []
+}

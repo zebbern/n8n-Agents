@@ -1,0 +1,68 @@
+{
+  "name": "SSH Command Executor",
+  "nodes": [
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "id": "c93d578b-2125-4141-ac04-1fe002c6b825",
+      "name": "SSH Execute Command",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        140,
+        20
+      ],
+      "credentials": {
+        "sshPassword": {
+          "id": "pNayuGvWMjam1rgH",
+          "name": "SSH Password account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "command"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        20
+      ],
+      "id": "9dca52c2-d14f-4910-9f3c-89fb4e28c727",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "SSH Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ac32fcae-321f-40b2-ab14-9ca4990074e5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eb1f7a63d7261ae48134020df9f51c99ce236492df30462ba39ff7bd720662f3"
+  },
+  "id": "kjtxS0Q5jeKYXzhX",
+  "tags": []
+}
