@@ -1,0 +1,206 @@
+{
+  "name": "Claude 4.0 Sonnet AI Agent with web search and Think functions",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1b66f8c4-21b7-47e3-bd1e-5649391c47cc",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        -180,
+        100
+      ],
+      "webhookId": "095537c6-b21a-4cb2-8312-13b1bf1699dc",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an AI-powered chatbot assistant for a website. Your primary function is to assist users by answering their queries and providing relevant information. You have access to a web_search tool that allows you to browse the internet for up-to-date information. Here's how you should operate:\n\n1. Website Information:\nFamiliarize yourself with this information about the website you're assisting. Use this as context for user interactions.\n\n2. Web Search Tool:\nYou have access to a web_search tool that can browse the internet. To use it, write the variable {web_search_question}. The tool will return relevant search results.\n\n3. Handling User Queries:\nWhen a user asks a question, follow these steps:\na) Analyze the query to determine if it's related to the website or requires external information.\nb) If the query is about the website, use the provided website information to answer.\nc) If external information is needed, use the web_search tool to find relevant data.\n\n4. Using web_search:\n- Use web_search for factual, current information that isn't provided in the website info.\n- Formulate clear, concise search queries.\n- If the first search doesn't yield useful results, refine your query and search again.\n- Limit searches to a maximum of three per user query to maintain efficiency.\n\n5. Using Think:\n- Using Think tool to think about something. It will not obtain new information or change the database, but just append the thought to the log. Use it when complex reasoning or some cache memory is needed.\n\n6. Formulating Responses:\n- Begin with information from the website if relevant.\n- Incorporate web search results to provide up-to-date, accurate information.\n- Summarize findings concisely and coherently.\n- If you're unsure or can't find reliable information, be honest about limitations.\n\n7. Ethical Considerations:\n- Respect user privacy. Don't ask for or store personal information.\n- Provide factual information. Avoid speculation or unverified claims.\n- If asked about controversial topics, strive for a balanced, neutral response.\n- Don't engage in or encourage illegal activities.\n\n8. Output Format:\nDo not include your thought process, web searches, or any other tags in the final output.\n"
+        }
+      },
+      "id": "06dd0b32-f4f7-4859-a84d-e4d8130d499b",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        40,
+        100
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-opus-4-20250514",
+          "mode": "list",
+          "cachedResultName": "Claude Opus 4"
+        },
+        "options": {
+          "maxTokensToSample": 1024
+        }
+      },
+      "id": "af75264b-bc13-4141-9d5a-1fe2d38ce513",
+      "name": "Anthropic Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "position": [
+        -40,
+        320
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "anthropicApi": {
+          "id": "xXeo1FfNZdfklYee",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "a8386dbd-9265-486c-a549-03d089006fb0",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        120,
+        320
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search on the web",
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/jso"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', `{\n  \"model\": \"claude-3-7-sonnet-latest\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{web_search_question}\"\n    }\n  ],\n  \"tools\": [\n    {\n      \"type\": \"web_search_20250305\",\n      \"name\": \"web_search\",\n      \"max_uses\": 5\n    }\n  ]\n}\n`, 'json') }}",
+        "options": {}
+      },
+      "id": "07b125a5-421e-4ead-98ad-8efb44019ec6",
+      "name": "web_search",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "position": [
+        240,
+        320
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "anthropicApi": {
+          "id": "xXeo1FfNZdfklYee",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "13553299-cedb-47ae-8951-914dcd718c2a",
+      "name": "Think",
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "position": [
+        360,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Claude 4.0 Sonnet AI Agent with web search and Think functions\nThis workflow builds a conversational AI chatbot agent using **Claude 4.0 Sonnet** model with the new . It enhances standard LLM capabilities with Anthropic’s features: **Web Search** and **Think**.",
+        "width": 620
+      },
+      "id": "71a6d047-5160-423d-ad9d-c2940be42888",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -180,
+        -100
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "54bd33b4-4b18-4df7-8c63-85ab749719ac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eb1f7a63d7261ae48134020df9f51c99ce236492df30462ba39ff7bd720662f3"
+  },
+  "id": "R3Byeck2QnBbnO6d",
+  "tags": []
+}
